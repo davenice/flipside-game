@@ -257,6 +257,17 @@
       .btn-row { flex-direction: column; }
       button { width: 100%; }
     }
+
+    #build-time {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--border);
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -267,6 +278,7 @@
     </header>
     <div id="card"></div>
   </div>
+  <div id="build-time"></div>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

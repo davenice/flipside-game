@@ -5,6 +5,9 @@ const card = document.getElementById('card')
 const streakEl = document.getElementById('streak')
 const streakCount = document.getElementById('streak-count')
 
+document.getElementById('build-time').textContent =
+  new Date(__BUILD_TIME__).toLocaleString()
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function wordHint(text) {
