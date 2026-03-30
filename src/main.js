@@ -5,8 +5,43 @@ const card = document.getElementById('card')
 const streakEl = document.getElementById('streak')
 const streakCount = document.getElementById('streak-count')
 
-document.getElementById('build-time').textContent =
-  new Date(__BUILD_TIME__).toLocaleString()
+const buildTimeEl = document.getElementById('build-time')
+buildTimeEl.textContent = new Date(__BUILD_TIME__).toLocaleString()
+
+// ── Config ────────────────────────────────────────────────────────────────────
+
+const RATE_KEY = 'flipside_rate'
+
+function getRate() {
+  return Number(localStorage.getItem(RATE_KEY) ?? 85)
+}
+
+function setRate(r) {
+  localStorage.setItem(RATE_KEY, r)
+}
+
+const dialog = document.getElementById('config-dialog')
+const rateSlider = document.getElementById('rate-slider')
+const rateValue = document.getElementById('rate-value')
+
+buildTimeEl.addEventListener('click', () => {
+  rateSlider.value = getRate()
+  rateValue.textContent = `${rateSlider.value}%`
+  dialog.showModal()
+})
+
+rateSlider.addEventListener('input', () => {
+  rateValue.textContent = `${rateSlider.value}%`
+})
+
+document.getElementById('config-save').addEventListener('click', () => {
+  setRate(Number(rateSlider.value))
+  dialog.close()
+})
+
+document.getElementById('config-cancel').addEventListener('click', () => {
+  dialog.close()
+})
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -264,7 +299,7 @@ const game = createGame(render)
 const _startGame = game.startGame.bind(game)
 game.startGame = function () {
   _startGame()
-  fetchTTS(game.getState().lyric.lyric)
+  fetchTTS(game.getState().lyric.lyric, getRate())
     .then(({ original, reversed }) => game.setTTSBuffers(original, reversed))
     .catch((err) => {
       console.error(err)
@@ -281,7 +316,7 @@ game.startGame = function () {
 const _nextLyric = game.nextLyric.bind(game)
 game.nextLyric = function () {
   _nextLyric()
-  fetchTTS(game.getState().lyric.lyric)
+  fetchTTS(game.getState().lyric.lyric, getRate())
     .then(({ original, reversed }) => game.setTTSBuffers(original, reversed))
     .catch((err) => {
       console.error(err)

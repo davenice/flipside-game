@@ -25,9 +25,9 @@ export const handler = async (event) => {
     return { statusCode: 204, headers: corsHeaders(origin) }
   }
 
-  let text, voice
+  let text, voice, rate
   try {
-    ;({ text, voice = 'Joanna' } = JSON.parse(event.body ?? '{}'))
+    ;({ text, voice = 'Joanna', rate = 85 } = JSON.parse(event.body ?? '{}'))
   } catch {
     return { statusCode: 400, headers: corsHeaders(origin), body: 'Invalid JSON' }
   }
@@ -36,9 +36,11 @@ export const handler = async (event) => {
     return { statusCode: 400, headers: corsHeaders(origin), body: 'Invalid text' }
   }
 
+  const clampedRate = Math.min(200, Math.max(20, Number(rate) || 85))
+
   const result = await polly.send(
     new SynthesizeSpeechCommand({
-      Text: '<speak><prosody rate="85%">'+text+"</prosody></speak>",
+      Text: `<speak><prosody rate="${clampedRate}%">${text}</prosody></speak>`,
       TextType: 'ssml',
       OutputFormat: 'mp3',
       VoiceId: voice,

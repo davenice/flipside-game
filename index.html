@@ -272,7 +272,56 @@
       font-size: 0.65rem;
       color: var(--border);
       letter-spacing: 0.05em;
-      pointer-events: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #build-time:hover { color: var(--text-muted); }
+
+    dialog {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--text);
+      font-family: var(--font);
+      padding: 28px 24px;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    dialog::backdrop { background: rgba(0,0,0,0.7); }
+
+    dialog h2 {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .config-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .config-row label {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    input[type=range] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    #rate-value {
+      font-size: 0.85rem;
+      color: var(--accent);
+      min-width: 3em;
+      text-align: right;
     }
   </style>
 </head>
@@ -285,6 +334,20 @@
     <div id="card"></div>
   </div>
   <div id="build-time"></div>
+
+  <dialog id="config-dialog">
+    <h2>Settings</h2>
+    <div class="config-row">
+      <label>Speech rate</label>
+      <input type="range" id="rate-slider" min="20" max="150" step="5" value="85" />
+      <span id="rate-value">85%</span>
+    </div>
+    <div class="btn-row">
+      <button id="config-cancel">Cancel</button>
+      <button id="config-save" class="primary">Save</button>
+    </div>
+  </dialog>
+
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

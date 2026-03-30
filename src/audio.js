@@ -22,11 +22,11 @@ export function reverseBuffer(buffer) {
   return reversed
 }
 
-export async function fetchTTS(lyric) {
+export async function fetchTTS(lyric, rate) {
   const res = await fetch(LAMBDA_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: lyric, voice: 'Joanna' }),
+    body: JSON.stringify({ text: lyric, voice: 'Joanna', ...(rate !== undefined && { rate }) }),
   })
   if (!res.ok) throw new Error(`Lambda error: ${res.status}`)
 
