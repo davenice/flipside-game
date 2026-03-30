@@ -1,4 +1,4 @@
-import lyrics from './lyrics.json'
+import lyrics from './lyrics.js'
 
 // ── State machine ─────────────────────────────────────────────────────────────
 // States: idle → loading → listening → recording → playback → guessing → revealed
