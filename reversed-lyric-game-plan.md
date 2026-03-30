@@ -1,7 +1,7 @@
-# Reversed Lyric Guessing Game — Plan
+# FLIPSIDE — Reversed Lyric Guessing Game Plan
 
 ## Concept
-A song lyric snippet is spoken via TTS, the audio is reversed, and played to the user. The user listens (can replay), records themselves mimicking the reversed sound, hears their recording played back, then types a guess. The original lyric is only revealed after the guess is submitted.
+A song lyric snippet is spoken via TTS, the audio is reversed, and played to the user. The user listens (can replay unlimited times), records themselves mimicking the reversed sound, hears their recording played back, then types a free-text guess. The original lyric is only revealed after submitting. A streak counter tracks consecutive correct guesses.
 
 ---
 
@@ -163,6 +163,182 @@ Effectively free at hobby scale.
 ]
 ```
 Start with 20–50 curated lyrics. Selected randomly client-side; ID never shown until reveal.
+
+---
+
+## UI Specification
+
+### Visual Design
+**Aesthetic:** Retro cassette tape / B-side record. Warm dark background with amber/orange accents, slightly worn texture feel.
+
+**Palette:**
+| Token | Value | Usage |
+|---|---|---|
+| `--bg` | `#1a0a00` | Page background |
+| `--surface` | `#2c1500` | Card / panel background |
+| `--border` | `#5c3010` | Card borders, dividers |
+| `--accent` | `#f97316` | Buttons, highlights, active states |
+| `--accent-dim` | `#7c3800` | Disabled / secondary buttons |
+| `--text` | `#f5e6d0` | Primary text |
+| `--text-muted` | `#a07850` | Labels, secondary text |
+
+**Typography:** `'Courier New', monospace` throughout — reinforces the retro recording-equipment feel. Game title in uppercase tracked-out letters.
+
+**Buttons:** Rectangular, no border-radius, 2px solid `--border`. Active state shifts background to `--accent` with dark text. Disabled state uses `--accent-dim` with muted text.
+
+**Progress bar (audio playback timer):** Simple horizontal bar in `--accent`, grows left-to-right over audio duration.
+
+---
+
+### Layout — Single Page, Centred Card
+
+```
+┌─────────────────────────────────────────────┐
+│                                             │
+│   F L I P S I D E                          │
+│   ─────────────────────                    │
+│                              🔥 Streak: 3  │
+│                                             │
+│  ┌───────────────────────────────────────┐  │
+│  │                                       │  │
+│  │          [  state panel  ]            │  │
+│  │                                       │  │
+│  └───────────────────────────────────────┘  │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+Max width: 480px, centred. The "state panel" is the only thing that changes between states.
+
+---
+
+### States & Panels
+
+#### `idle`
+```
+┌───────────────────────────────────────────┐
+│                                           │
+│   Can you work out the lyric?             │
+│                                           │
+│   [ ▶  NEW GAME ]                        │
+│                                           │
+└───────────────────────────────────────────┘
+```
+
+#### `loading`
+```
+┌───────────────────────────────────────────┐
+│                                           │
+│   Preparing your lyric...                 │
+│   ░░░░░░░░░░░░░░░░  (animated dots)       │
+│                                           │
+└───────────────────────────────────────────┘
+```
+
+#### `listening`
+```
+┌───────────────────────────────────────────┐
+│   LISTEN                                  │
+│                                           │
+│   [ ▶  PLAY ]                            │
+│   ████████████░░░░░░░  0:03 / 0:05       │
+│                                           │
+│   Played: 2 times                         │
+│                                           │
+│   [ ⏺  RECORD YOURSELF ]                │
+│                                           │
+└───────────────────────────────────────────┘
+```
+- PLAY button becomes STOP while audio is playing
+- Timer bar fills as audio plays
+- Play count increments each time (no limit)
+- RECORD YOURSELF always available (player decides when ready)
+
+#### `recording`
+```
+┌───────────────────────────────────────────┐
+│   RECORDING...                            │
+│                                           │
+│   ⏺  0:04                                │
+│                                           │
+│   [ ■  STOP ]                            │
+│                                           │
+└───────────────────────────────────────────┘
+```
+- Recording duration counter ticks up
+- STOP ends recording and transitions to `playback`
+
+#### `playback`
+```
+┌───────────────────────────────────────────┐
+│   YOUR RECORDING                          │
+│                                           │
+│   [ ▶  PLAY BACK ]                       │
+│   ████████████░░░░░░░  0:02 / 0:04       │
+│                                           │
+│   [ ↩  RE-RECORD ]    [ ✓  GUESS ]      │
+│                                           │
+└───────────────────────────────────────────┘
+```
+- Auto-plays recording once on entering state
+- Player can replay or re-record before committing
+- RE-RECORD returns to `recording`
+
+#### `guessing`
+```
+┌───────────────────────────────────────────┐
+│   WHAT'S THE LYRIC?                       │
+│                                           │
+│   ┌─────────────────────────────────────┐ │
+│   │ type the lyric here...              │ │
+│   └─────────────────────────────────────┘ │
+│                                           │
+│   [ ↩  BACK ]         [ ✓  REVEAL ]     │
+│                                           │
+└───────────────────────────────────────────┘
+```
+- Free text input, autofocused
+- BACK returns to `playback`
+- REVEAL submits and transitions to `revealed`
+
+#### `revealed`
+```
+┌───────────────────────────────────────────┐
+│   THE LYRIC WAS:                          │
+│                                           │
+│   "We've come too far                     │
+│    to give up who we are"                 │
+│                                           │
+│   — Daft Punk · Get Lucky                 │
+│                                           │
+│   Your guess:                             │
+│   "we've come too far to give up"         │
+│                                           │
+│   🔥 Streak: 3   [ ▶  NEXT LYRIC ]      │
+│                                           │
+└───────────────────────────────────────────┘
+```
+- Lyric displayed large, in quotes
+- Artist · Song in muted text below
+- Player's own guess shown for comparison (no right/wrong judgement — player decides)
+- Streak counter shown; player self-reports by clicking NEXT LYRIC (streak managed by honour system — no auto-scoring since free text can't be auto-checked)
+- Alternatively: show two buttons — `[ ✓ I GOT IT ]  [ ✗ I DIDN'T ]` to update streak
+
+> **Note on streak:** since free text can't be reliably auto-matched, show both the original lyric and the user's guess side-by-side. Player self-reports with `[ ✓ GOT IT ]` / `[ ✗ NOPE ]` buttons. This is honest and avoids frustrating false negatives.
+
+---
+
+### Streak Display
+- Shown in top-right of card at all times once a game has been played
+- Format: `🔥 3` (flame emoji + number)
+- Resets to 0 on `[ ✗ NOPE ]`
+- Persisted in `localStorage` so it survives page refresh
+
+---
+
+### Responsive
+- Card fills viewport width on mobile with 16px horizontal padding
+- All buttons full-width on screens < 400px
 
 ---
 
