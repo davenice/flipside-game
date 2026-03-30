@@ -123,12 +123,11 @@ function buildPanel(state) {
         <div class="card-label">The answer was:</div>
         <div class="lyric-display">${state.lyric.lyric}</div>
         <div class="attribution">from ${state.lyric.movie}</div>
-        <div class="btn-row">
+        <div class="btn-grid">
           <button id="btn-play-reversed">&#9654;&nbsp; Original</button>
+          ${state.recordingBuffer ? `<button id="btn-play-mine">&#9654;&nbsp; Mine</button>` : '<span></span>'}
           <button id="btn-play-orig-fwd">&#9654;&nbsp; Original (fwd)</button>
-          ${state.recordingBuffer ? `
-          <button id="btn-play-mine">&#9654;&nbsp; Mine</button>
-          <button id="btn-play-mine-rev">&#9654;&nbsp; Mine (rev)</button>` : ''}
+          ${state.recordingBuffer ? `<button id="btn-play-mine-rev">&#9654;&nbsp; Mine (rev)</button>` : ''}
         </div>
         <div class="card-label" style="margin-top:4px">Did you get it?</div>
         <div class="btn-row">
