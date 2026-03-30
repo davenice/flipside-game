@@ -47,7 +47,7 @@ document.getElementById('config-cancel').addEventListener('click', () => {
 
 function wordHint(text) {
   const words = text.trim().split(/\s+/)
-  const blanks = words.map(w => w[0].toUpperCase() + '_'.repeat(w.length - 1)).join('   ')
+  const blanks = words.map(w => w[0].toUpperCase() + '_').join('   ')
   return `${blanks}  ·  ${words.length} ${words.length === 1 ? 'word' : 'words'}`
 }
 
