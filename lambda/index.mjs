@@ -27,7 +27,7 @@ export const handler = async (event) => {
 
   let text, voice, rate
   try {
-    ;({ text, voice = 'Joanna', rate = 85 } = JSON.parse(event.body ?? '{}'))
+    ;({ text, voice = 'Amy', rate = 85 } = JSON.parse(event.body ?? '{}'))
   } catch {
     return { statusCode: 400, headers: corsHeaders(origin), body: 'Invalid JSON' }
   }
